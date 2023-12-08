@@ -1,10 +1,6 @@
 # Advent of Code - Day 1
 
-file = open("day-02/input.txt", "r")
-lines = readlines(file)
-close(file)
-
-function getValues(line::String, color::String)
+function get_values(line::String, color::String)
     values = Integer[]
     regex = Regex("($("\\d")+ $(color))")
     for i in eachmatch(regex, line)
@@ -15,10 +11,10 @@ function getValues(line::String, color::String)
     return values
 end
 
-function isPossible(line::String)
-    red = getValues(line, "red")
-    green = getValues(line, "green")
-    blue = getValues(line, "blue")
+function is_possible(line::String)
+    red = get_values(line, "red")
+    green = get_values(line, "green")
+    blue = get_values(line, "blue")
     for i in eachindex(red)
         if red[i] > 12
             return false
@@ -37,11 +33,40 @@ function isPossible(line::String)
     return true
 end
 
-possible = map(x -> isPossible(x), lines)
+function min_cubes(line::String, color::String)
+    cubes = get_values(line, color)
+    min_value = 0
+    for i in eachindex(cubes)
+        if min_value < cubes[i]
+            min_value = cubes[i]
+        end
+    end
+    return min_value
+end
 
-sum = 0
+function get_power(line)
+    min_red = min_cubes(line, "red")
+    min_green = min_cubes(line, "green")
+    min_blue = min_cubes(line, "blue")
+    power = min_red * min_green * min_blue
+    return power
+end
+
+file = open("day-02/input.txt", "r")
+lines = readlines(file)
+close(file)
+
+possible = map(is_possible, lines)
+powers = map(get_power, lines)
+
+sum_possible = 0
 for i in eachindex(possible)
     if possible[i] == true
-        global sum += i
+        global sum_possible += i
     end
+end
+
+sum_power = 0
+for i in eachindex(powers)
+    global sum_power += powers[i]
 end
